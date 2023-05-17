@@ -15,7 +15,7 @@ jobs:
         env:
           POSTGRES_PASSWORD: vsa
           POSTGRES_USER: vsa
-          POSTGRES_DB: vsa_pr1
+          POSTGRES_DB: vsa_pr2
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
