@@ -6,6 +6,8 @@ import sk.stuba.fei.uim.vsa.pr2.model.dto.request.CreateStudentRequest;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.response.MessageResponse;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.response.student.StudentWithThesisResponse;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.response.teacher.TeacherWithThesesResponse;
+import sk.stuba.fei.uim.vsa.pr2.utils.ResourceTest;
+import sk.stuba.fei.uim.vsa.pr2.utils.TestData;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -17,8 +19,8 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sk.stuba.fei.uim.vsa.pr2.TeacherResourceTest.createTeacher;
-import static sk.stuba.fei.uim.vsa.pr2.TestData.ARRAY_CONTENT_LENGTH;
-import static sk.stuba.fei.uim.vsa.pr2.TestData.OBJECT_CONTENT_LENGTH;
+import static sk.stuba.fei.uim.vsa.pr2.utils.TestData.ARRAY_CONTENT_LENGTH;
+import static sk.stuba.fei.uim.vsa.pr2.utils.TestData.OBJECT_CONTENT_LENGTH;
 
 @Slf4j
 public class StudentResourceTest extends ResourceTest {

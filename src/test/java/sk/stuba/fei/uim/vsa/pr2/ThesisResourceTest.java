@@ -8,6 +8,8 @@ import sk.stuba.fei.uim.vsa.pr2.model.dto.request.UserIdRequest;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.response.ThesisResponse;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.response.student.StudentWithThesisResponse;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.response.teacher.TeacherWithThesesResponse;
+import sk.stuba.fei.uim.vsa.pr2.utils.ResourceTest;
+import sk.stuba.fei.uim.vsa.pr2.utils.TestData;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -20,7 +22,7 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static sk.stuba.fei.uim.vsa.pr2.StudentResourceTest.createStudent;
 import static sk.stuba.fei.uim.vsa.pr2.TeacherResourceTest.createTeacher;
-import static sk.stuba.fei.uim.vsa.pr2.TestData.*;
+import static sk.stuba.fei.uim.vsa.pr2.utils.TestData.*;
 
 @Slf4j
 public class ThesisResourceTest extends ResourceTest {

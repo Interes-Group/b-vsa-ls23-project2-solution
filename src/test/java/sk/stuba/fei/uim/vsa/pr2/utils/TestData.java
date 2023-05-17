@@ -1,4 +1,4 @@
-package sk.stuba.fei.uim.vsa.pr2;
+package sk.stuba.fei.uim.vsa.pr2.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;

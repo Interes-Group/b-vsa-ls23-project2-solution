@@ -1,4 +1,4 @@
-package sk.stuba.fei.uim.vsa.pr2;
+package sk.stuba.fei.uim.vsa.pr2.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -9,6 +9,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import sk.stuba.fei.uim.vsa.pr2.Project2Application;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.response.MessageResponse;
 
 import javax.persistence.EntityManagerFactory;
@@ -35,10 +36,10 @@ import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sk.stuba.fei.uim.vsa.pr2.ApplicationConfiguration.BASE_URI;
-import static sk.stuba.fei.uim.vsa.pr2.TestConstants.*;
-import static sk.stuba.fei.uim.vsa.pr2.TestData.OBJECT_CONTENT_LENGTH;
-import static sk.stuba.fei.uim.vsa.pr2.TestUtils.clearDB;
-import static sk.stuba.fei.uim.vsa.pr2.TestUtils.getDBConnection;
+import static sk.stuba.fei.uim.vsa.pr2.utils.TestConstants.*;
+import static sk.stuba.fei.uim.vsa.pr2.utils.TestData.OBJECT_CONTENT_LENGTH;
+import static sk.stuba.fei.uim.vsa.pr2.utils.TestUtils.clearDB;
+import static sk.stuba.fei.uim.vsa.pr2.utils.TestUtils.getDBConnection;
 
 @Slf4j
 public abstract class ResourceTest {
