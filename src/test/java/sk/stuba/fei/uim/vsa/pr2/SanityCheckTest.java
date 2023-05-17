@@ -53,7 +53,7 @@ public class SanityCheckTest {
             String content = client.path("application.wadl").request().get(String.class);
             assertNotNull(content);
             assertTrue(content.contains("<application xmlns=\"http://wadl.dev.java.net/2009/02\">"));
-            assertTrue(content.contains("<resources base=\""+BASE_URI+"\">"));
+            assertTrue(content.contains("<resources base=\"" + BASE_URI + (BASE_URI.endsWith("/") ? "" : "/") + "\">"));
         } catch (Exception e) {
             fail(e);
         }

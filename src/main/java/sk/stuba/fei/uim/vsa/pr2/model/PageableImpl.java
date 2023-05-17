@@ -1,9 +1,9 @@
 package sk.stuba.fei.uim.vsa.pr2.model;
 
 import lombok.Builder;
-import lombok.Data;
 
-@Data
+import java.util.Objects;
+
 @Builder
 public class PageableImpl implements Pageable {
 
@@ -81,5 +81,40 @@ public class PageableImpl implements Pageable {
             totalPages = ((Double) Math.ceil(this.totalElements.doubleValue() / this.size.doubleValue())).intValue();
         }
         return totalPages;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+
+    public void setTotalPages(Integer totalPages) {
+        this.totalPages = totalPages;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PageableImpl pageable = (PageableImpl) o;
+        return Objects.equals(number, pageable.number) && Objects.equals(size, pageable.size) && Objects.equals(totalElements, pageable.totalElements) && Objects.equals(totalPages, pageable.totalPages);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(number, size, totalElements, totalPages);
+    }
+
+    @Override
+    public String toString() {
+        return "PageableImpl{" +
+                "number=" + number +
+                ", size=" + size +
+                ", totalElements=" + totalElements +
+                ", totalPages=" + totalPages +
+                '}';
     }
 }

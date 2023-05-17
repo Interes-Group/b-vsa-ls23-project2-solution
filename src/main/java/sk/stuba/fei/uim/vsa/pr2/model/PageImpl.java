@@ -1,11 +1,11 @@
 package sk.stuba.fei.uim.vsa.pr2.model;
 
-import lombok.Data;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-@Data
+
 public class PageImpl<R> implements Page<R> {
 
     private List<R> content;
@@ -31,12 +31,32 @@ public class PageImpl<R> implements Page<R> {
         return page;
     }
 
+    public void setContent(List<R> content) {
+        this.content = content;
+    }
+
+    public void setPage(Pageable page) {
+        this.page = page;
+    }
 
     @Override
     public String toString() {
         return "PageImpl{" +
-                "content=" + content.getClass().getName() +
+                "content=[" + content.stream().map(Object::toString).collect(Collectors.joining(", ")) + "], " +
                 "pageable=" + page +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PageImpl<?> page1 = (PageImpl<?>) o;
+        return Objects.equals(content, page1.content) && Objects.equals(page, page1.page);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(content, page);
     }
 }

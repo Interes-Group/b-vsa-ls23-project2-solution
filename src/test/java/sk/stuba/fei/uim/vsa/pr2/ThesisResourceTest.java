@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static sk.stuba.fei.uim.vsa.pr2.StudentResourceTest.createStudent;
 import static sk.stuba.fei.uim.vsa.pr2.TeacherResourceTest.createTeacher;
 import static sk.stuba.fei.uim.vsa.pr2.utils.TestData.*;
@@ -480,10 +481,7 @@ public class ThesisResourceTest extends ResourceTest {
 
     @Test
     public void shouldFindThesisByTeacher() {
-        if (isBonusImplemented()) {
-            log.info("Implementation of bonus endpoint was detected. This test is irrelevant");
-            return;
-        }
+        assumeFalse(isBonusImplemented(), "Implementation of bonus endpoint was detected. This test is irrelevant and it's skipped.");
 
         ThesisResponse thesis = Objects.requireNonNull(createThesis(TestData.TH01, TestData.T01, true)).readEntity(ThesisResponse.class);
         assertNotNull(thesis);
@@ -525,10 +523,7 @@ public class ThesisResourceTest extends ResourceTest {
 
     @Test
     public void shouldFindThesisByStudent() {
-        if (isBonusImplemented()) {
-            log.info("Implementation of bonus endpoint was detected. This test is irrelevant");
-            return;
-        }
+        assumeFalse(isBonusImplemented(), "Implementation of bonus endpoint was detected. This test is irrelevant and it's skipped.");
 
         ThesisResponse thesis = Objects.requireNonNull(createThesis(TestData.TH01, TestData.T01, true)).readEntity(ThesisResponse.class);
         assertNotNull(thesis);
@@ -579,10 +574,8 @@ public class ThesisResourceTest extends ResourceTest {
 
     @Test
     public void shouldCallFindThesesWithEmptyCriteria() {
-        if (isBonusImplemented()) {
-            log.info("Implementation of bonus endpoint was detected. This test is irrelevant");
-            return;
-        }
+        assumeFalse(isBonusImplemented(), "Implementation of bonus endpoint was detected. This test is irrelevant and it's skipped.");
+
         ThesisResponse thesis = Objects.requireNonNull(createThesis(TestData.TH01, TestData.T01, true)).readEntity(ThesisResponse.class);
         assertNotNull(thesis);
         assertNotNull(thesis.getId());
@@ -621,10 +614,8 @@ public class ThesisResourceTest extends ResourceTest {
 
     @Test
     public void shouldCallFindThesesWithWrongCriteria() {
-        if (isBonusImplemented()) {
-            log.info("Implementation of bonus endpoint was detected. This test is irrelevant");
-            return;
-        }
+        assumeFalse(isBonusImplemented(), "Implementation of bonus endpoint was detected. This test is irrelevant and it's skipped.");
+
         ThesisResponse thesis = Objects.requireNonNull(createThesis(TestData.TH01, TestData.T01, true)).readEntity(ThesisResponse.class);
         assertNotNull(thesis);
         assertNotNull(thesis.getId());

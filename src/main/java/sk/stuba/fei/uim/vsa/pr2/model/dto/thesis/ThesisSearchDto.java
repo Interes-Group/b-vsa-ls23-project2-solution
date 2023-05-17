@@ -23,6 +23,7 @@ public class ThesisSearchDto extends UserIdDto {
     }
 
     public LocalDate getPublishedOnAsLocalDate() {
+        if (this.publishedOn == null || this.publishedOn.isEmpty()) return null;
         return LocalDate.parse(this.publishedOn);
     }
 
