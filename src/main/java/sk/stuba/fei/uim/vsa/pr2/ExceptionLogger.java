@@ -9,7 +9,7 @@ import org.glassfish.jersey.server.monitoring.RequestEventListener;
 import javax.ws.rs.ext.Provider;
 
 @Slf4j
-@Provider
+//@Provider
 public class ExceptionLogger implements ApplicationEventListener, RequestEventListener {
 
     @Override

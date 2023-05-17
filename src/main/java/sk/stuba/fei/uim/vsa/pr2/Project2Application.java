@@ -19,8 +19,8 @@ public class Project2Application {
 
     public static HttpServer startServer() {
         final ResourceConfig rc = ResourceConfig.forApplicationClass(JAXRSApplicationConfiguration.class);
-        rc.register(new LoggingFeature(java.util.logging.Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME),
-                Level.FINEST, LoggingFeature.Verbosity.PAYLOAD_ANY, 99999));
+//        rc.register(new LoggingFeature(java.util.logging.Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME),
+//                Level.FINEST, LoggingFeature.Verbosity.PAYLOAD_ANY, 99999));
 
         log.info("Starting Grizzly2 HTTP server...");
         log.info("Server listening on " + BASE_URI);
