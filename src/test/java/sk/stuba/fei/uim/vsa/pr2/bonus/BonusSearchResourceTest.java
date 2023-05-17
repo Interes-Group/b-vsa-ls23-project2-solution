@@ -6,6 +6,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import sk.stuba.fei.uim.vsa.pr2.model.dto.request.CreateStudentRequest;
+import sk.stuba.fei.uim.vsa.pr2.model.dto.request.CreateTeacherRequest;
+import sk.stuba.fei.uim.vsa.pr2.model.dto.request.CreateThesisRequest;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.response.ThesisResponse;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.response.student.StudentWithThesisResponse;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.response.teacher.TeacherWithThesesResponse;
@@ -21,9 +24,6 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
-import static sk.stuba.fei.uim.vsa.pr2.StudentResourceTest.createStudent;
-import static sk.stuba.fei.uim.vsa.pr2.TeacherResourceTest.createTeacher;
-import static sk.stuba.fei.uim.vsa.pr2.ThesisResourceTest.createThesis;
 import static sk.stuba.fei.uim.vsa.pr2.utils.TestData.OBJECT_CONTENT_LENGTH;
 
 @Slf4j
@@ -233,6 +233,51 @@ public class BonusSearchResourceTest extends ResourceTest {
             log.error(e.getMessage(), e);
             fail(e);
         }
+    }
+
+    public static Response createStudent(TestData.Student student) {
+        return createResource("students", () ->
+                        CreateStudentRequest.builder()
+                                .aisId(student.aisId)
+                                .name(student.name)
+                                .email(student.email)
+                                .password(Base64.getEncoder().encodeToString(student.password.getBytes()))
+                                .year(student.year)
+                                .term(student.term)
+                                .programme(student.programme).build(),
+                null);
+    }
+
+    public static Response createTeacher(TestData.Teacher teacher) {
+        return createResource("teachers", () ->
+                        CreateTeacherRequest.builder()
+                                .aisId(teacher.aisId)
+                                .name(teacher.name)
+                                .email(teacher.email)
+                                .password(Base64.getEncoder().encodeToString(teacher.password.getBytes()))
+                                .department(teacher.department)
+                                .institute(teacher.institute)
+                                .build()
+                , null);
+    }
+
+    public static Response createThesis(TestData.Thesis thesis, TestData.Teacher teacher, boolean createTeacher) {
+        if (createTeacher) {
+            try (Response response = createTeacher(teacher)) {
+                assertNotNull(response);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                fail(e);
+                return Response.serverError().build();
+            }
+        }
+        return createResource("theses", () -> CreateThesisRequest.builder()
+                        .title(thesis.title)
+                        .description(thesis.description)
+                        .type(thesis.type)
+                        .registrationNumber(thesis.registrationNumber)
+                        .build(),
+                teacher);
     }
 
 
