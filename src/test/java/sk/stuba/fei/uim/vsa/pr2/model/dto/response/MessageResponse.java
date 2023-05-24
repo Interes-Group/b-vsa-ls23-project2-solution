@@ -1,8 +1,10 @@
 package sk.stuba.fei.uim.vsa.pr2.model.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MessageResponse {
 
     private Integer code;

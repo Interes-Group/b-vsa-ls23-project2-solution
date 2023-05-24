@@ -1,5 +1,6 @@
 package sk.stuba.fei.uim.vsa.pr2.model.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.response.student.StudentAltResponse;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ThesisResponse {
 
     private Long id;

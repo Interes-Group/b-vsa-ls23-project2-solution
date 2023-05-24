@@ -1,9 +1,11 @@
 package sk.stuba.fei.uim.vsa.pr2.model.dto.response.student;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class StudentResponse {
 
     private Long id;
