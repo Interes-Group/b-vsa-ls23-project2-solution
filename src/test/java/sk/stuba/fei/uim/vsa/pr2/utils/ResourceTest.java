@@ -1,5 +1,10 @@
 package sk.stuba.fei.uim.vsa.pr2.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.junit.jupiter.api.AfterAll;
@@ -27,8 +32,11 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.StringReader;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
@@ -50,6 +58,15 @@ public abstract class ResourceTest {
     protected static WebTarget client;
     protected static Connection db;
     protected static EntityManagerFactory emf;
+
+    protected ObjectMapper objectMapper;
+
+    public ResourceTest() {
+        objectMapper = new ObjectMapper();
+        JavaTimeModule javaTimeModule = new JavaTimeModule();
+        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ISO_LOCAL_DATE));
+        objectMapper.registerModule(javaTimeModule);
+    }
 
     @BeforeAll
     public static void initClient() throws SQLException, ClassNotFoundException {
@@ -191,9 +208,59 @@ public abstract class ResourceTest {
             assertFalse(message.getMessage().isEmpty());
             log.info("Content of the error message: " + message.getMessage());
             log.info("Has error object: " + (message.getError() != null));
+            if (message.getError() != null) {
+                log.info("Message Error object: " + message.getError());
+            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             fail(e);
+        }
+    }
+
+    public <T> T readObject(Response response, Class<T> clazz) {
+        if (!response.hasEntity() || response.getLength() == 0) return null;
+        String body = response.readEntity(String.class);
+        return readObject(body, clazz);
+    }
+
+    public <T> T readObject(String string, Class<T> clazz) {
+        if (string == null || string.isEmpty()) return null;
+        try {
+            log.info("Parsing response: " + string);
+            return objectMapper.readValue(string, clazz);
+        } catch (JsonProcessingException e) {
+            log.error("Cannot parse response: " + string);
+            log.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public <T> T readObject(Response response, TypeReference<T> type) {
+        if (!response.hasEntity() || response.getLength() == 0) return null;
+        String body = response.readEntity(String.class);
+        try {
+            log.info("Parsing response: " + body);
+            return objectMapper.readValue(body, type);
+        } catch (JsonProcessingException e) {
+            log.error("Cannot parse response: " + body);
+            log.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public <T> Long getIdFromEntity(Response response, Class<T> clazz) {
+        assertNotNull(response);
+        assertTrue(response.hasEntity());
+        Object obj = readObject(response, clazz);
+        assertNotNull(obj);
+        try {
+            Method method = obj.getClass().getMethod("getId");
+            assertNotNull(method);
+            assertEquals(Long.class, method.getReturnType());
+            return (Long) method.invoke(obj);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
     }
 

@@ -1,9 +1,6 @@
 package sk.stuba.fei.uim.vsa.pr2.bonus;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.request.CreateStudentRequest;
@@ -18,8 +15,6 @@ import sk.stuba.fei.uim.vsa.pr2.utils.TestData;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,20 +31,11 @@ public class BonusSearchResourceTest extends ResourceTest {
 
     private static final Map<String, Object> pageParams = new HashMap<>();
 
-    private final ObjectMapper mapper;
-
-    public BonusSearchResourceTest() {
-        mapper = new ObjectMapper();
-        JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ISO_LOCAL_DATE));
-        mapper.registerModule(javaTimeModule);
-    }
-
     @Test
     public void shouldFindThesesWithPageOf5() {
         assumeTrue(isBonusImplemented(), "Skipping test. Bonus endpoints were not implemented");
 
-        Long t01Id = Objects.requireNonNull(createTeacher(TestData.T01)).readEntity(TeacherWithThesesResponse.class).getId();
+        Long t01Id = getIdFromEntity(createTeacher(TestData.T01), TeacherWithThesesResponse.class);
         Set<Long> thIds = new HashSet<>();
         final int numOfThesis = 3;
         for (int i = 0; i < numOfThesis; i++) {
@@ -61,7 +47,7 @@ public class BonusSearchResourceTest extends ResourceTest {
             ), TestData.T01, false)) {
                 assertNotNull(newThesis);
                 assertTrue(newThesis.hasEntity());
-                ThesisResponse body = newThesis.readEntity(ThesisResponse.class);
+                ThesisResponse body = readObject(newThesis, ThesisResponse.class);
                 assertNotNull(body);
                 assertNotNull(body.getId());
                 thIds.add(body.getId());
@@ -88,8 +74,7 @@ public class BonusSearchResourceTest extends ResourceTest {
             assertTrue(response.getLength() > OBJECT_CONTENT_LENGTH);
             assertTrue(response.hasEntity());
             assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
-            String json = response.readEntity(String.class);
-            PagedResponse<ThesisResponse> page = mapper.readValue(json, new TypeReference<PagedResponse<ThesisResponse>>() {
+            PagedResponse<ThesisResponse> page = readObject(response, new TypeReference<PagedResponse<ThesisResponse>>() {
             });
             assertNotNull(page);
             assertNotNull(page.getPage());
@@ -113,7 +98,7 @@ public class BonusSearchResourceTest extends ResourceTest {
     public void shouldFindTeachers() {
         assumeTrue(isBonusImplemented(), "Skipping test. Bonus endpoints were not implemented");
 
-        Long t01Id = Objects.requireNonNull(createTeacher(TestData.T01)).readEntity(TeacherWithThesesResponse.class).getId();
+        Long t01Id = getIdFromEntity(createTeacher(TestData.T01), TeacherWithThesesResponse.class);
         final int numTeachers = 4;
         Set<Long> tIds = new HashSet<>();
         for (int i = 0; i < numTeachers; i++) {
@@ -126,7 +111,7 @@ public class BonusSearchResourceTest extends ResourceTest {
                     TestData.T01.password))) {
                 assertNotNull(newTeacher);
                 assertTrue(newTeacher.hasEntity());
-                TeacherWithThesesResponse body = newTeacher.readEntity(TeacherWithThesesResponse.class);
+                TeacherWithThesesResponse body = readObject(newTeacher, TeacherWithThesesResponse.class);
                 assertNotNull(body);
                 assertNotNull(body.getId());
                 tIds.add(body.getId());
@@ -150,9 +135,7 @@ public class BonusSearchResourceTest extends ResourceTest {
             assertTrue(response.getLength() > OBJECT_CONTENT_LENGTH);
             assertTrue(response.hasEntity());
             assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
-//            PagedResponse<TeacherWithThesesResponse> page = response.readEntity(new GenericType<PagedResponse<TeacherWithThesesResponse>>(){}); // Cannot user standard readEntity to type because of broken parametrization
-            String json = response.readEntity(String.class);
-            PagedResponse<TeacherWithThesesResponse> page = mapper.readValue(json, new TypeReference<PagedResponse<TeacherWithThesesResponse>>() {
+            PagedResponse<TeacherWithThesesResponse> page = readObject(response, new TypeReference<PagedResponse<TeacherWithThesesResponse>>() {
             });
             assertNotNull(page);
             assertNotNull(page.getPage());
@@ -175,7 +158,7 @@ public class BonusSearchResourceTest extends ResourceTest {
     public void shouldFindStudents() {
         assumeTrue(isBonusImplemented(), "Skipping test. Bonus endpoints were not implemented");
 
-        Long s01Id = Objects.requireNonNull(createStudent(TestData.S01)).readEntity(StudentWithThesisResponse.class).getId();
+        Long s01Id = getIdFromEntity(createStudent(TestData.S01), StudentWithThesisResponse.class);
         final int numOfStudents = 5;
         Set<Long> stIds = new HashSet<>();
         for (int i = 0; i < numOfStudents; i++) {
@@ -189,7 +172,7 @@ public class BonusSearchResourceTest extends ResourceTest {
                     TestData.S01.password))) {
                 assertNotNull(newStudent);
                 assertTrue(newStudent.hasEntity());
-                StudentWithThesisResponse body = newStudent.readEntity(StudentWithThesisResponse.class);
+                StudentWithThesisResponse body = readObject(newStudent, StudentWithThesisResponse.class);
                 assertNotNull(body);
                 assertNotNull(body.getId());
                 stIds.add(body.getId());
@@ -213,9 +196,7 @@ public class BonusSearchResourceTest extends ResourceTest {
             assertTrue(response.getLength() > OBJECT_CONTENT_LENGTH);
             assertTrue(response.hasEntity());
             assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
-//            PagedResponse<TeacherWithThesesResponse> page = response.readEntity(new GenericType<PagedResponse<TeacherWithThesesResponse>>(){}); // Cannot user standard readEntity to type because of broken parametrization
-            String json = response.readEntity(String.class);
-            PagedResponse<StudentWithThesisResponse> page = mapper.readValue(json, new TypeReference<PagedResponse<StudentWithThesisResponse>>() {
+            PagedResponse<StudentWithThesisResponse> page = readObject(response, new TypeReference<PagedResponse<StudentWithThesisResponse>>() {
             });
             assertNotNull(page);
             assertNotNull(page.getPage());

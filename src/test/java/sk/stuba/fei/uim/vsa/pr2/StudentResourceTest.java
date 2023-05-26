@@ -1,16 +1,15 @@
 package sk.stuba.fei.uim.vsa.pr2;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.request.CreateStudentRequest;
-import sk.stuba.fei.uim.vsa.pr2.model.dto.response.MessageResponse;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.response.student.StudentWithThesisResponse;
 import sk.stuba.fei.uim.vsa.pr2.model.dto.response.teacher.TeacherWithThesesResponse;
 import sk.stuba.fei.uim.vsa.pr2.utils.ResourceTest;
 import sk.stuba.fei.uim.vsa.pr2.utils.TestData;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Base64;
@@ -32,13 +31,14 @@ public class StudentResourceTest extends ResourceTest {
         try (Response response = createStudent(TestData.S01)) {
             response.bufferEntity();
             log.info("Received response " + response);
-            StudentWithThesisResponse body = response.readEntity(StudentWithThesisResponse.class);
+            String json = response.readEntity(String.class);
+            assertFalse(json.contains("password"));
+            StudentWithThesisResponse body = readObject(json, StudentWithThesisResponse.class);
             assertNotNull(body);
             assertEquals(TestData.S01.aisId, body.getAisId());
             assertEquals(TestData.S01.email, body.getEmail());
             assertEquals(TestData.S01.name, body.getName());
             assertTrue(body.getThesis() == null || body.getThesis().getId() == null);
-            assertFalse(response.readEntity(String.class).contains("password"));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             fail(e);
@@ -70,13 +70,14 @@ public class StudentResourceTest extends ResourceTest {
                 null)) {
             response.bufferEntity();
             log.info("Received response " + response);
-            StudentWithThesisResponse body = response.readEntity(StudentWithThesisResponse.class);
+            String json = response.readEntity(String.class);
+            assertFalse(json.contains("password"));
+            StudentWithThesisResponse body = readObject(json, StudentWithThesisResponse.class);
             assertNotNull(body);
             assertEquals(TestData.S01.aisId, body.getAisId());
             assertEquals(TestData.S01.email, body.getEmail());
             assertEquals(TestData.S01.name, body.getName());
             assertTrue(body.getThesis() == null || body.getThesis().getId() == null);
-            assertFalse(response.readEntity(String.class).contains("password"));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             fail(e);
@@ -86,8 +87,8 @@ public class StudentResourceTest extends ResourceTest {
     @Test
     public void shouldGetAllStudents() {
         try {
-            Long s01Id = Objects.requireNonNull(createStudent(TestData.S01)).readEntity(StudentWithThesisResponse.class).getId();
-            Long s02Id = Objects.requireNonNull(createStudent(TestData.S02)).readEntity(StudentWithThesisResponse.class).getId();
+            Long s01Id = getIdFromEntity(createStudent(TestData.S01), StudentWithThesisResponse.class);
+            Long s02Id = getIdFromEntity(createStudent(TestData.S02), StudentWithThesisResponse.class);
 
             Response response = request(STUDENTS_PATH, TestData.S01).get();
             assertNotNull(response);
@@ -95,7 +96,7 @@ public class StudentResourceTest extends ResourceTest {
             assertTrue(response.getLength() > ARRAY_CONTENT_LENGTH);
             assertTrue(response.hasEntity());
             assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
-            List<StudentWithThesisResponse> body = response.readEntity(new GenericType<List<StudentWithThesisResponse>>() {
+            List<StudentWithThesisResponse> body = readObject(response, new TypeReference<List<StudentWithThesisResponse>>() {
             });
             assertNotNull(body);
             assertEquals(2, body.size());
@@ -120,13 +121,13 @@ public class StudentResourceTest extends ResourceTest {
     @Test
     public void shouldGetEmptyList() {
         try {
-            Long t01Id = Objects.requireNonNull(createTeacher(TestData.T01)).readEntity(TeacherWithThesesResponse.class).getId();
+            Long t01Id = getIdFromEntity(createTeacher(TestData.T01), TeacherWithThesesResponse.class);
             Response response = request(STUDENTS_PATH, TestData.T01).get();
             assertNotNull(response);
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             assertTrue(response.hasEntity());
             assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
-            List<StudentWithThesisResponse> body = response.readEntity(new GenericType<List<StudentWithThesisResponse>>() {
+            List<StudentWithThesisResponse> body = readObject(response, new TypeReference<List<StudentWithThesisResponse>>() {
             });
             assertNotNull(body);
             assertTrue(body.isEmpty());
@@ -138,7 +139,7 @@ public class StudentResourceTest extends ResourceTest {
 
     @Test
     public void shouldGetStudent() {
-        Long s01Id = Objects.requireNonNull(createStudent(TestData.S01)).readEntity(StudentWithThesisResponse.class).getId();
+        Long s01Id = getIdFromEntity(createStudent(TestData.S01),StudentWithThesisResponse.class);
         try (Response response = request(STUDENTS_PATH + "/" + s01Id, TestData.S01).get()) {
             response.bufferEntity();
             assertNotNull(response);
@@ -146,13 +147,14 @@ public class StudentResourceTest extends ResourceTest {
             assertTrue(response.getLength() > OBJECT_CONTENT_LENGTH);
             assertTrue(response.hasEntity());
             assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
-            StudentWithThesisResponse body = response.readEntity(StudentWithThesisResponse.class);
+            String json = response.readEntity(String.class);
+            assertFalse(json.contains("password"));
+            StudentWithThesisResponse body = readObject(json, StudentWithThesisResponse.class);
             assertNotNull(body);
             assertEquals(TestData.S01.aisId, body.getAisId());
             assertEquals(TestData.S01.email, body.getEmail());
             assertEquals(TestData.S01.name, body.getName());
             assertTrue(body.getThesis() == null || body.getThesis().getId() == null);
-            assertFalse(response.readEntity(String.class).contains("password"));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             fail(e);
@@ -161,7 +163,7 @@ public class StudentResourceTest extends ResourceTest {
 
     @Test
     public void shouldGetNotFoundForNonExistingStudent() {
-        Long s01Id = Objects.requireNonNull(createStudent(TestData.S01)).readEntity(StudentWithThesisResponse.class).getId();
+        Long s01Id = getIdFromEntity(createStudent(TestData.S01),StudentWithThesisResponse.class);
         try (Response response = request(STUDENTS_PATH + "/99", TestData.S01).get()) {
             testErrorMessage(response, Response.Status.NOT_FOUND);
         } catch (Exception e) {
@@ -173,7 +175,7 @@ public class StudentResourceTest extends ResourceTest {
     @Test
     public void shouldDeleteStudent() {
         try {
-            Long s01Id = Objects.requireNonNull(createStudent(TestData.S01)).readEntity(StudentWithThesisResponse.class).getId();
+            Long s01Id = getIdFromEntity(createStudent(TestData.S01),StudentWithThesisResponse.class);
             String path = STUDENTS_PATH + "/" + s01Id;
 
             Response response = request(path, TestData.S01).delete();
@@ -182,7 +184,7 @@ public class StudentResourceTest extends ResourceTest {
             assertTrue(response.getLength() > OBJECT_CONTENT_LENGTH);
             assertTrue(response.hasEntity());
             assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
-            StudentWithThesisResponse body = response.readEntity(StudentWithThesisResponse.class);
+            StudentWithThesisResponse body = readObject(response, StudentWithThesisResponse.class);
             assertNotNull(body);
             assertEquals(TestData.S01.aisId, body.getAisId());
             assertEquals(TestData.S01.email, body.getEmail());
@@ -194,21 +196,9 @@ public class StudentResourceTest extends ResourceTest {
             assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), nonExisting.getStatus());
             nonExisting.close();
 
-            Long s02Id = Objects.requireNonNull(createStudent(TestData.S02)).readEntity(StudentWithThesisResponse.class).getId();
+            Long s02Id = getIdFromEntity(createStudent(TestData.S02), StudentWithThesisResponse.class);
             Response deleteCheckResponse = request(path, TestData.S02).get();
-            assertNotNull(deleteCheckResponse);
-            assertEquals(Response.Status.NOT_FOUND.getStatusCode(), deleteCheckResponse.getStatus());
-            assertTrue(deleteCheckResponse.getLength() > OBJECT_CONTENT_LENGTH);
-            assertTrue(deleteCheckResponse.hasEntity());
-            assertEquals(MediaType.APPLICATION_JSON_TYPE, deleteCheckResponse.getMediaType());
-            MessageResponse errorMsg = deleteCheckResponse.readEntity(MessageResponse.class);
-            assertNotNull(errorMsg);
-            assertEquals(404, errorMsg.getCode());
-            assertNotNull(errorMsg.getMessage());
-            assertFalse(errorMsg.getMessage().isEmpty());
-            assertNotNull(errorMsg.getError());
-            assertNotNull(errorMsg.getError().getType());
-            assertNotNull(errorMsg.getError().getTrace());
+            testErrorMessage(deleteCheckResponse, Response.Status.NOT_FOUND);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             fail(e);
@@ -218,8 +208,8 @@ public class StudentResourceTest extends ResourceTest {
     @Test
     public void shouldReturnForbiddenToDeleteWithWrongStudent() {
         try {
-            Long s01Id = Objects.requireNonNull(createStudent(TestData.S01)).readEntity(StudentWithThesisResponse.class).getId();
-            Long s02Id = Objects.requireNonNull(createStudent(TestData.S02)).readEntity(StudentWithThesisResponse.class).getId();
+            Long s01Id = getIdFromEntity(createStudent(TestData.S01), StudentWithThesisResponse.class);
+            Long s02Id = getIdFromEntity(createStudent(TestData.S02), StudentWithThesisResponse.class);
 
             Response response = request(STUDENTS_PATH + "/" + s01Id, TestData.S02).delete();
             testErrorMessage(response, Response.Status.FORBIDDEN);
